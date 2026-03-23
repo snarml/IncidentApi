@@ -129,31 +129,25 @@ namespace IncidentApiRimel.Controllers
         }
 
         // GET: api/IncidentsDb/filter-by-status
-        [HttpGet("filter-by-status")]
-        public async Task<ActionResult<IEnumerable<Incident>>> FilterByStatus([FromQuery] string status)
+        [HttpGet("filter/status/{status}")]
+        public IActionResult FilterByStatus(string status)
         {
-            if (string.IsNullOrWhiteSpace(status))
-                return BadRequest("Le paramètre 'status' est requis.");
+            var incidents = _context.Incidents
+                .Where(i => i.Status.Contains(status))
+                .ToList();
 
-            var filtered = await _context.Incidents
-                .Where(i => i.Status.ToUpper() == status.ToUpper())
-                .ToListAsync();
-
-            return Ok(filtered);
+            return Ok(incidents);
         }
 
         // GET: api/IncidentsDb/filter-by-severity
-        [HttpGet("filter-by-severity")]
-        public async Task<ActionResult<IEnumerable<Incident>>> FilterBySeverity([FromQuery] string severity)
+        [HttpGet("filter/severity/{severity}")]
+        public IActionResult FilterBySeverity(string severity)
         {
-            if (string.IsNullOrWhiteSpace(severity))
-                return BadRequest("Le paramètre 'severity' est requis.");
+            var incidents = _context.Incidents
+                .Where(i => i.Severity.Contains(severity))
+                .ToList();
 
-            var filtered = await _context.Incidents
-                .Where(i => i.Severity.ToUpper() == severity.ToUpper())
-                .ToListAsync();
-
-            return Ok(filtered);
+            return Ok(incidents);
         }
 
         private bool IncidentExists(int id)

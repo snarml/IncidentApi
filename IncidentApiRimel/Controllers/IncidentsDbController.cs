@@ -161,5 +161,23 @@ namespace IncidentApiRimel.Controllers
         {
             return _context.Incidents.Any(e => e.Id == id);
         }
+        // put incident status
+
+        [HttpPatch("{id}/status")]
+        public async Task<IActionResult> PutIncidentStatus(int id, string status)
+        {
+    if (!AllowedStatuses.Contains(status.ToUpper()))
+    {
+        return BadRequest($"Status must be one of the following: {string.Join(", ", AllowedStatuses)}");
+    }
+
+    var incident = await _context.Incidents.FindAsync(id);
+    if (incident == null)
+        return NotFound();
+
+    incident.Status = status;
+    await _context.SaveChangesAsync();
+    return NoContent();
+}
     }
 }

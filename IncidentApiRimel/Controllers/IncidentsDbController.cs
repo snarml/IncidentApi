@@ -94,7 +94,7 @@ namespace IncidentApiRimel.Controllers
 
             // Valeurs par défaut obligatoires
             incident.Severity = incident.Severity.ToUpper();
-            incident.Status = "IN_PROGRESS";
+            incident.Status = "OPEN";
             incident.CreatedAt = DateTime.Now;
 
             // On ne doit pas envoyer d'Id manuellement avec SQLite AUTOINCREMENT

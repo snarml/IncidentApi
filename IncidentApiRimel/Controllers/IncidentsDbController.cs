@@ -161,7 +161,8 @@ namespace IncidentApiRimel.Controllers
         {
             return _context.Incidents.Any(e => e.Id == id);
         }
-        // put incident status
+        // put incident status par le collaborateur
+        
 
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> PutIncidentStatus(int id, string status)

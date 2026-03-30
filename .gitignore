@@ -3,3 +3,4 @@ bin/
 obj/
 *.user
 *.Development.json
+IncidentApiRimel/Migrations/

@@ -15,10 +15,9 @@ namespace IncidentApiRimel.Controllers
     {
         private readonly IncidentsDbContext _context;
 
-        // Tableaux de validation comme dans ton premier TP
-        private static readonly string[] AllowedSeverities = { "LOW", "MEDIUM", "HIGH", "CRITICAL" };
-        private static readonly string[] AllowedStatuses = { "OPEN", "IN_PROGRESS", "RESOLVED" };
 
+        private static readonly string[] AllowedSeverities = {"LOW", "MEDIUM","HIGH", "CRITICAL" };
+        private static readonly string[] AllowedStatuses = { "OPEN", "IN_PROGRESS","RESOLVED" };
         public IncidentsDbController(IncidentsDbContext context)
         {
             _context = context;
@@ -95,7 +94,7 @@ namespace IncidentApiRimel.Controllers
 
             // Valeurs par défaut obligatoires
             incident.Severity = incident.Severity.ToUpper();
-            incident.Status = "OPEN";
+            incident.Status = "IN_PROGRESS";
             incident.CreatedAt = DateTime.Now;
 
             // On ne doit pas envoyer d'Id manuellement avec SQLite AUTOINCREMENT

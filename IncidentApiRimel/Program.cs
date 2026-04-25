@@ -12,9 +12,17 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var dbPath = System.IO.Path.Combine(builder.Environment.ContentRootPath, "Incidents.db");
-builder.Services.AddDbContext<IncidentsDbContext>(options =>
-    options.UseSqlite($"Data Source={dbPath}"));
+if (builder.Environment.IsEnvironment("Testing"))
+{
+    builder.Services.AddDbContext<IncidentsDbContext>(options =>
+        options.UseInMemoryDatabase("IncidentsTestsDb"));
+}
+else
+{
+    var dbPath = System.IO.Path.Combine(builder.Environment.ContentRootPath, "Incidents.db");
+    builder.Services.AddDbContext<IncidentsDbContext>(options =>
+        options.UseSqlite($"Data Source={dbPath}"));
+}
 
 var app = builder.Build();
 

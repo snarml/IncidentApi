@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IncidentApiRimel.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace IncidentApiRimel.Controllers
 {
@@ -46,22 +47,24 @@ namespace IncidentApiRimel.Controllers
 
         // PUT: api/IncidentsDb/update-status/5
         [HttpPut("update-status/{id}")]
-        public async Task<IActionResult> UpdateIncidentStatus(int id, [FromBody] string status)
+        public async Task<IActionResult> PutIncident(int id, [FromBody] Incident incident)
         {
-            var incident = await _context.Incidents.FindAsync(id);
-            if (incident == null)
+            if (id != incident.Id)
+            {
+                return BadRequest();
+            }
+
+            var existingIncident = await _context.Incidents.FindAsync(id);
+
+            if (existingIncident == null)
             {
                 return NotFound();
             }
 
-            if (string.IsNullOrWhiteSpace(status) || !AllowedStatuses.Contains(status.ToUpper()))
-            {
-                return BadRequest("Status invalide.");
-            }
+            existingIncident.Title = incident.Title;
+            existingIncident.Status = incident.Status;
 
-            incident.Status = status.ToUpper();
-            
-            _context.Entry(incident).State = EntityState.Modified;
+            _context.Entry(existingIncident).State = EntityState.Modified;
 
             try
             {
@@ -79,7 +82,7 @@ namespace IncidentApiRimel.Controllers
                 }
             }
 
-            return Ok(incident);
+            return NoContent();
         }
 
         // POST: api/IncidentsDb/create-incident
@@ -87,13 +90,13 @@ namespace IncidentApiRimel.Controllers
         public async Task<ActionResult<Incident>> PostIncident(Incident incident)
         {
             // Validation de la sévérité
-            if (string.IsNullOrWhiteSpace(incident.Severity) || !AllowedSeverities.Contains(incident.Severity.ToUpper()))
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Severity invalide. Valeurs autorisées: LOW, MEDIUM, HIGH, CRITICAL");
+                return BadRequest(ModelState);
             }
 
             // Valeurs par défaut obligatoires
-            incident.Severity = incident.Severity.ToUpper();
+            incident.Severity = incident.Severity?.ToUpper();
             incident.Status = "OPEN";
             incident.CreatedAt = DateTime.Now;
 
@@ -103,7 +106,7 @@ namespace IncidentApiRimel.Controllers
             _context.Incidents.Add(incident);
             await _context.SaveChangesAsync();
 
-            return Ok(incident);
+            return CreatedAtAction(nameof(GetIncident), new { id = incident.Id }, incident);
         }
 
         // DELETE: api/IncidentsDb/delete-incident/5
@@ -138,12 +141,13 @@ namespace IncidentApiRimel.Controllers
                 .Where(i => i.Status.ToUpper() == status.ToUpper())
                 .ToListAsync();
 
-            return Ok(filtered);
+            return filtered;
         }
 
         // GET: api/IncidentsDb/filter-by-severity
         [HttpGet("getbyseverityasync/{severity}")]
-        public async Task<ActionResult<IEnumerable<Incident>>> FilterBySeverity([FromQuery] string severity)
+       
+        public async Task<ActionResult<IEnumerable<Incident>>> FilterBySeverity(string severity)
         {
             if (string.IsNullOrWhiteSpace(severity))
                 return BadRequest("Le paramètre 'severity' est requis.");
@@ -152,7 +156,7 @@ namespace IncidentApiRimel.Controllers
                 .Where(i => i.Severity.ToUpper() == severity.ToUpper())
                 .ToListAsync();
 
-            return Ok(filtered);
+            return filtered;
         }
 
         private bool IncidentExists(int id)

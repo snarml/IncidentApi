@@ -14,12 +14,14 @@ namespace AppTests
             _client = factory.CreateClient();
         }
         [Fact]
+        [Trait("Category", "Integration")]
         public async Task GetIncidents_ReturnsOk()
         {
             var response = await _client.GetAsync("api/IncidentsDb/get-all");
             response.EnsureSuccessStatusCode();
         }
         [Fact]
+        [Trait("Category", "Integration")]
         public async Task PostIncident_CreatesIncident()
         {
             var incident = new
@@ -36,6 +38,7 @@ namespace AppTests
             Assert.Equal("HIGH", createdIncident.Severity);
         }
         [Fact]
+        [Trait("Category", "Integration")]
         public async Task PostThenGet_ReturnsInsertedIncident()
         {
             var incident = new

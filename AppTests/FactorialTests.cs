@@ -8,6 +8,7 @@ namespace AppTests
     public class FactorialTests
     {
         [Theory]
+        [Trait("Category", "Unit")]
         [InlineData(5, 120)]
         [InlineData(1, 1)]
         [InlineData(0, 1)]
@@ -19,6 +20,7 @@ namespace AppTests
             Assert.Equal(expected, result);
         }
         [Theory]
+        [Trait("Category", "Unit")]
         [InlineData(-1)]
         [InlineData(-3)]
         [InlineData(-10)]
